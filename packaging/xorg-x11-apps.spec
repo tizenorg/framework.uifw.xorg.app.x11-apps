@@ -1,7 +1,7 @@
 Summary: X.Org X11 applications
 Name: xorg-x11-apps
 Version: 7.5
-Release: 2
+Release: 3.5
 License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
