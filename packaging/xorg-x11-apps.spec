@@ -1,4 +1,4 @@
-%define _unpackaged_files_terminate_build 0 
+%define _unpackaged_files_terminate_build 0
 
 Summary: X.Org X11 applications
 Name: xorg-x11-apps
@@ -65,7 +65,7 @@ BuildRequires: xorg-x11-xbitmaps
 Provides: luit oclock x11perf xclipboard xclock xconsole xcursorgen
 Provides: xeyes xload xlogo xmag xmessage xpr xwd xwud
 Provides: xfd xfontsel xvidtune
-#Provides: xbiff 
+#Provides: xbiff
 
 # NOTE: xwd, xwud, luit used to be in these.
 #Obsoletes: XFree86, xorg-x11
@@ -90,12 +90,12 @@ A collection of common X Window System applications.
 %build
 # Build all apps
 {
-CFLAGS="${CFLAGS} -D_F_BLOCK_MULTI_VIS_" 
+CFLAGS="${CFLAGS} -D_F_BLOCK_MULTI_VIS_"
 for app in luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune ; do
 	pushd $app
 		sed -i '/XAW_/ s/)/, xaw7)/; /XAW_/ s/XAW_CHECK_XPRINT_SUPPORT/PKG_CHECK_MODULES/' configure.ac
 		autoreconf -v --install
-		%configure --disable-xprint 
+		%configure --disable-xprint
 		make
 	popd
 done
@@ -103,6 +103,9 @@ done
 
 %install
 rm -rf $RPM_BUILD_ROOT
+mkdir -p %{buildroot}/usr/share/license
+cp -af COPYING %{buildroot}/usr/share/license/%{name}
+
 # Install all apps
 {
 for app in luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune ; do
@@ -120,6 +123,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %{_bindir}/*
+/usr/share/license/%{name}
 #%{_bindir}/luit
 #%{_bindir}/oclock
 #%{_bindir}/x11perf
