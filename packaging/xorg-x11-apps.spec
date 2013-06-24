@@ -34,6 +34,7 @@ Source: %{name}-%{version}.tar.gz
 #Source18: ftp://ftp.x.org/pub/individual/app/xfd-1.1.0.tar.bz2
 #Source19: ftp://ftp.x.org/pub/individual/app/xfontsel-1.0.3.tar.bz2
 #Source20: ftp://ftp.x.org/pub/individual/app/xvidtune-1.0.2.tar.bz2
+#Source21: ftp://ftp.x.org/pub/individual/app/xev-1.2.1.tar.bz2
 
 #Patch0: x11perf-1.4.1-x11perf-datadir-cleanups.patch
 #Patch2: xconsole-1.0.3-streams-me-softer.patch
@@ -41,7 +42,6 @@ Source: %{name}-%{version}.tar.gz
 
 BuildRequires: autoconf automake
 
-BuildRequires: xorg-x11-xutils-dev
 # xfd needs gettext
 BuildRequires: gettext
 BuildRequires: zlib-devel
@@ -60,7 +60,9 @@ BuildRequires: libpng-devel
 BuildRequires: libXfixes-devel
 BuildRequires: libXi-devel >= 1.2
 BuildRequires: libXxf86vm-devel
-BuildRequires: xorg-x11-xbitmaps
+BuildRequires: xbitmaps-devel
+BuildRequires: libXrandr-devel
+BuildRequires: xproto
 
 Provides: luit oclock x11perf xclipboard xclock xconsole xcursorgen
 Provides: xeyes xload xlogo xmag xmessage xpr xwd xwud
@@ -91,7 +93,7 @@ A collection of common X Window System applications.
 # Build all apps
 {
 CFLAGS="${CFLAGS} -D_F_BLOCK_MULTI_VIS_"
-for app in luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune ; do
+for app in luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune xev; do
 	pushd $app
 		sed -i '/XAW_/ s/)/, xaw7)/; /XAW_/ s/XAW_CHECK_XPRINT_SUPPORT/PKG_CHECK_MODULES/' configure.ac
 		autoreconf -v --install
@@ -108,7 +110,7 @@ cp -af COPYING %{buildroot}/usr/share/license/%{name}
 
 # Install all apps
 {
-for app in luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune ; do
+for app in luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune xev; do
 	pushd $app
 	make install DESTDIR=$RPM_BUILD_ROOT
 	popd
@@ -135,6 +137,7 @@ rm -rf $RPM_BUILD_ROOT
 #%{_bindir}/xcursorgen
 #%{_bindir}/xcutsel
 #%{_bindir}/xdpr
+#%{_bindir}/xev
 #%{_bindir}/xeyes
 #%{_bindir}/xfd
 #%{_bindir}/xfontsel
