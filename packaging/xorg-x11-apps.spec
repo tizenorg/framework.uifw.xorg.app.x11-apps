@@ -1,10 +1,10 @@
-%define _unpackaged_files_terminate_build 0 
+%define _unpackaged_files_terminate_build 0
 
 Summary: X.Org X11 applications
 Name: xorg-x11-apps
 # NOTE: The package version should be set to the X11 major release from which
 # the OS release is based upon.
-Version: 7.6
+Version: 7.6.2
 Release: 5
 License: MIT
 Group: User Interface/X
@@ -50,8 +50,6 @@ BuildRequires: libX11-devel
 BuildRequires: libXmu-devel
 BuildRequires: libXext-devel
 BuildRequires: libXt-devel
-BuildRequires: libXaw-devel
-BuildRequires: libXpm-devel
 BuildRequires: libXft-devel
 BuildRequires: libXrender-devel
 BuildRequires: libxkbfile-devel
@@ -62,10 +60,11 @@ BuildRequires: libXi-devel >= 1.2
 BuildRequires: libXxf86vm-devel
 BuildRequires: xorg-x11-xbitmaps
 
-Provides: luit oclock x11perf xclipboard xclock xconsole xcursorgen
-Provides: xeyes xload xlogo xmag xmessage xpr xwd xwud
-Provides: xfd xfontsel xvidtune
-#Provides: xbiff 
+#Provides: luit oclock x11perf xclipboard xclock xconsole xcursorgen
+#Provides: xeyes xload xlogo xmag xmessage xpr xwd xwud
+#Provides: xfd xfontsel xvidtune
+#Provides: xbiff
+Provides: xcursorgen xeyes xload xwd xwud
 
 # NOTE: xwd, xwud, luit used to be in these.
 #Obsoletes: XFree86, xorg-x11
@@ -78,7 +77,8 @@ Provides: xfd xfontsel xvidtune
 %description
 A collection of common X Window System applications.
 
-%define apps luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune
+#%define apps luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune
+%define apps xeyes xwd xwud
 
 %prep
 %setup -q
@@ -90,12 +90,12 @@ A collection of common X Window System applications.
 %build
 # Build all apps
 {
-CFLAGS="${CFLAGS} -D_F_BLOCK_MULTI_VIS_" 
-for app in luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune ; do
+CFLAGS="${CFLAGS} -D_F_BLOCK_MULTI_VIS_"
+for app in %{apps} ; do
 	pushd $app
 		sed -i '/XAW_/ s/)/, xaw7)/; /XAW_/ s/XAW_CHECK_XPRINT_SUPPORT/PKG_CHECK_MODULES/' configure.ac
 		autoreconf -v --install
-		%configure --disable-xprint 
+		%configure --disable-xprint
 		make
 	popd
 done
@@ -103,9 +103,12 @@ done
 
 %install
 rm -rf $RPM_BUILD_ROOT
+mkdir -p %{buildroot}/usr/share/license
+cp -af COPYING %{buildroot}/usr/share/license/%{name}
+
 # Install all apps
 {
-for app in luit oclock x11perf xclipboard xclock xconsole xcursorgen xeyes xload xlogo xmag xmessage xpr xwd xwud xfd xfontsel xvidtune ; do
+for app in %{apps} ; do
 	pushd $app
 	make install DESTDIR=$RPM_BUILD_ROOT
 	popd
@@ -118,46 +121,8 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 %files
+%manifest xorg-x11-apps.manifest
 %defattr(-,root,root,-)
 %{_bindir}/*
-#%{_bindir}/luit
-#%{_bindir}/oclock
-#%{_bindir}/x11perf
-#%{_bindir}/x11perfcomp
-#%{_bindir}/xbiff
-#%{_bindir}/xclipboard
-#%{_bindir}/xclock
-#%{_bindir}/xconsole
-#%{_bindir}/xcursorgen
-#%{_bindir}/xcutsel
-#%{_bindir}/xdpr
-#%{_bindir}/xeyes
-#%{_bindir}/xfd
-#%{_bindir}/xfontsel
-#%{_bindir}/xload
-#%{_bindir}/xlogo
-#%{_bindir}/xmag
-#%{_bindir}/xmessage
-#%{_bindir}/xpr
-#%{_bindir}/xvidtune
-#%{_bindir}/xwd
-#%{_bindir}/xwud
-#%{_datadir}/X11/app-defaults/Clock-color
-#%{_datadir}/X11/app-defaults/XClipboard
-#%{_datadir}/X11/app-defaults/XClock
-#%{_datadir}/X11/app-defaults/XClock-color
-#%{_datadir}/X11/app-defaults/XConsole
-#%{_datadir}/X11/app-defaults/XFontSel
-#%{_datadir}/X11/app-defaults/Xfd
-#%{_datadir}/X11/app-defaults/XLoad
-#%{_datadir}/X11/app-defaults/XLogo
-#%{_datadir}/X11/app-defaults/XLogo-color
-#%{_datadir}/X11/app-defaults/Xmag
-#%{_datadir}/X11/app-defaults/Xmessage
-#%{_datadir}/X11/app-defaults/Xmessage-color
-#%{_datadir}/X11/app-defaults/Xvidtune
-#%dir %{_datadir}/X11/x11perfcomp
-#%{_datadir}/X11/x11perfcomp/Xmark
-#%{_datadir}/X11/x11perfcomp/fillblnk
-#%{_datadir}/X11/x11perfcomp/perfboth
-#%{_datadir}/X11/x11perfcomp/perfratio
+/usr/share/license/%{name}
+
